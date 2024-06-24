@@ -1,16 +1,17 @@
 
 using Newtonsoft.Json;
+using System.Net;
 
 namespace Tests
 {
     [TestClass]
-    public class ApiAutomation
+    public class SmokeTests
     {
         [TestMethod]
         public void TokenTest()
         {
             HttpResponseMessage response = ApiCalls.CreateTokenCall();
-            Assert.IsTrue(response.IsSuccessStatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
             string myContent = response.Content.ReadAsStringAsync().Result;
             TokenResponse tokenResponse = (TokenResponse)JsonConvert.DeserializeObject(myContent, typeof(TokenResponse));
             Assert.IsNotNull(tokenResponse);
@@ -19,18 +20,18 @@ namespace Tests
         [TestMethod]
         public void GetBookingIdsTest()
         {
-            HttpResponseMessage response = ApiCalls.CreateTokenCall();
-            Assert.IsTrue(response.IsSuccessStatusCode);
+            HttpResponseMessage response = ApiCalls.GetBookingIdsCall();
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
             string myContent = response.Content.ReadAsStringAsync().Result;
-            TokenResponse tokenResponse = (TokenResponse)JsonConvert.DeserializeObject(myContent, typeof(TokenResponse));
-            Assert.IsNotNull(tokenResponse);
+            BookingIds[] bookingIds = (BookingIds[])JsonConvert.DeserializeObject(myContent, typeof(BookingIds[]));
+            Assert.IsNotNull(bookingIds);
         }
 
         [TestMethod]
         public void CreateBookingTest()
         {
             HttpResponseMessage response = ApiCalls.CreateBookingCall();
-            Assert.IsTrue(response.IsSuccessStatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
             string myContent = response.Content.ReadAsStringAsync().Result;
             CreateBookingResponse bookingResponse = (CreateBookingResponse)JsonConvert.DeserializeObject(myContent, typeof(CreateBookingResponse));
             Assert.IsNotNull(bookingResponse);
@@ -42,7 +43,7 @@ namespace Tests
             string token = ApiCalls.GetToken();
             int bookingId = ApiCalls.GetBookingId();
             HttpResponseMessage response = ApiCalls.UpdateBookingCall(bookingId, token);
-            Assert.IsTrue(response.IsSuccessStatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
             string myContent = response.Content.ReadAsStringAsync().Result;
             CreateBookingResponse bookingResponse = (CreateBookingResponse)JsonConvert.DeserializeObject(myContent, typeof(CreateBookingResponse));
             Assert.IsNotNull(bookingResponse);
@@ -54,7 +55,7 @@ namespace Tests
             string token = ApiCalls.GetToken();
             int bookingId = ApiCalls.GetBookingId();
             HttpResponseMessage response = ApiCalls.PartialUpdateBookingCall(bookingId, token);
-            Assert.IsTrue(response.IsSuccessStatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
             string myContent = response.Content.ReadAsStringAsync().Result;
             CreateBookingResponse bookingResponse = (CreateBookingResponse)JsonConvert.DeserializeObject(myContent, typeof(CreateBookingResponse));
             Assert.IsNotNull(bookingResponse);
@@ -65,8 +66,8 @@ namespace Tests
         {
             string token = ApiCalls.GetToken();
             int bookingId = ApiCalls.GetBookingId();
-            HttpResponseMessage response = ApiCalls.PartialUpdateBookingCall(bookingId, token);
-            Assert.IsTrue(response.IsSuccessStatusCode);
+            HttpResponseMessage response = ApiCalls.DeleteBookingCall(bookingId, token);
+            Assert.AreEqual(HttpStatusCode.Created, response.StatusCode);
             string myContent = response.Content.ReadAsStringAsync().Result;
             Assert.IsNotNull(myContent);
         }
